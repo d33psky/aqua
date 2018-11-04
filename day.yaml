@@ -1,0 +1,24 @@
+---
+# a day in the life of a fishtank
+white:
+    - start_time: "00:00"
+      type: "flat"
+      value: 0
+    - start_time: "07:30"
+      type: "ramp-up"
+      begin_value: 0
+      end_value: 1
+    - start_time: "10:30"
+      type: "flat"
+      value: 1
+    - start_time: "16:00"
+      type: "ramp-down"
+      begin_value: 1
+      end_value: 0.01
+    - start_time: "21:00" 
+      type: "flat"
+      value: 0.01
+    - start_time: "23:00" 
+      type: "flat"
+      value: 0.00
+
