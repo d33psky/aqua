@@ -4,7 +4,6 @@ import math
 import yaml
 import datetime
 import time
-import os
 
 IO.setmode (IO.BCM)
 IO.setup(18,IO.OUT)
@@ -22,16 +21,12 @@ def ramp_up(minute, minutes):
     rad = minute * math.pi / minutes
     mycos = (1 - math.cos(rad))/2
     #print("%f %f" % (rad, mycos))
-#   p.ChangeDutyCycle(50 * mycos)
-#   time.sleep(0.01)
     return mycos
 
 def ramp_down(minute, minutes):
     rad = (minutes - minute) * math.pi / minutes
     mycos = (1 - math.cos(rad))/2
     #print("%f %f" % (rad, mycos))
-#   p.ChangeDutyCycle(50 * mycos)
-#   time.sleep(0.01)
     return mycos
 
 def get_level(now, colour):
@@ -40,7 +35,7 @@ def get_level(now, colour):
     print("now %s" % now_hm)
     for color, time_slots in data.items():
         #print(color) 
-        if color == 'white':
+        if color == colour:
             num_time_slots = len(time_slots)
             #print(num_time_slots)
             for index, time_slot in enumerate(time_slots):
@@ -65,8 +60,8 @@ def get_level(now, colour):
                     delta_t = t2_minutes - t1_minutes
                     if slot_type == 'flat': 
                         slot_value = time_slots[index]['value']
-                        #print("Flat at %d" % slot_value)
                         level = flat(slot_value)
+                        #print("Flat at %d" % slot_value)
                     if slot_type == 'ramp-up':
                         begin_value = time_slots[index]['begin_value']
                         end_value = time_slots[index]['end_value']
@@ -87,6 +82,7 @@ while 1:
     p.ChangeDutyCycle(50 * level)
     time.sleep(60)
 
+# test run an entire day
 just1minute = datetime.timedelta(minutes=1)
 now = datetime.datetime.now()
 for i in range(0, 60*24, 15):
