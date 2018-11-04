@@ -1,78 +1,15 @@
 #!/usr/bin/python3
+import RPi.GPIO as IO
 import math
-
-#print "sin(math.pi) : ",  math.sin(math.pi)
-#print "sin(math.pi/2) : ",  math.sin(math.pi/2)
-
-#maxrange=10
-#range_to_rad = math.pi / maxrange;
-#range_to_rad_ramp = math.pi / 2 / maxrange;
-#print maxrange, range_to_rad, range_to_rad_ramp
-
-#for i in range(maxrange + 1):
-#    rad = i * range_to_rad_ramp
-#    print "%d %f %f" % (i, rad, math.sin(rad))
-
-#def ramp_up(steps):
-#    for i in range(steps+1):
-#        rad = i * range_to_rad_ramp
-#        print "%d %f %f" % (i, rad, math.sin(rad))
-#
-#def ramp_down(steps):
-#    for i in range(steps+1):
-#        rad = (steps - i) * range_to_rad_ramp
-#        print "%d %f %f" % (i, rad, math.sin(rad))
-#
-#ramp_up(10)
-#ramp_down(10)
-
-#def ramp_up(steps):
-#    for i in range(steps+1):
-#        rad = i * math.pi / steps
-#        mycos = (1 - math.cos(rad))/2
-#        print("%d %f %f" % (i, rad, mycos))
-##        p.ChangeDutyCycle(50 * mycos)
-##        time.sleep(0.01)
-#
-#def ramp_down(steps):
-#    for i in range(steps+1):
-#        rad = (steps - i) * math.pi / steps
-#        mycos = (1 - math.cos(rad))/2
-#        print("%d %f %f" % (i, rad, mycos))
-##        p.ChangeDutyCycle(50 * mycos)
-##        time.sleep(0.01)
-#
-##while 1:
-#print("ramp up")
-#ramp_up(10)
-#print("max")
-#
-#print("ramp down")
-#ramp_down(10)
-#print("min")
-
-#from numpy import genfromtxt
-#csv = genfromtxt('day.csv', delimiter=',')
-#00:00,flat,0
-#07:30,ramp-up,3:00,0,1
-#10:30,flat,1
-#17:00,ramp-down,4:00,1,0.01
-#21:00,flat,0.01
-#23:00,flat,0
-#import numpy as np
-#from io import StringIO
-##np.genfromtxt(StringIO('day.csv'), comments="#", delimiter=",", autostrip=True)
-#csv = np.genfromtxt(StringIO(open('day.csv').read()), comments="#", delimiter=",", autostrip=True, missing_values="", usecols=(0,1,2,3,4))
-##print(vars(csv))
-#from inspect import getmembers
-#from pprint import pprint
-##pprint(getmembers(csv))
-#pprint(csv)
-
 import yaml
 import datetime
 import time
 import os
+
+IO.setmode (IO.BCM)
+IO.setup(18,IO.OUT)
+p = IO.PWM(18,100)
+p.start(0)
 
 data = yaml.load(open('day.yaml'))
 #print(yaml.dump(data))
@@ -143,30 +80,12 @@ def get_level(now, colour):
                     break
             return level
 
-#start_time = "07:30"
-#end_time   = "10:30"
-
-#hour,minute = (int(x) for x in list(map(int, start_time.split(":"))))
-#t1_minutes = 60 * hour + minute
-#
-#hour,minute = (int(x) for x in list(map(int, end_time.split(":"))))
-#t2_minutes = 60 * hour + minute
-#
-#delta_t = t2_minutes - t1_minutes
-#print(delta_t)
-#print(now_minutes - t1_minutes)
-#level = ramp_up(now_minutes - t1_minutes, delta_t)
-#level = ramp_down(now_minutes - t1_minutes, delta_t)
-
 while 1:
     now = datetime.datetime.now()
     level = get_level(now, 'white')
     print(level)
+    p.ChangeDutyCycle(50 * level)
     time.sleep(60)
-
-#now_hm = datetime.time(now.hour, now.minute, now.second)
-#now_minutes = 60 * now.hour + now.minute
-#print("now %s" % now_hm)
 
 just1minute = datetime.timedelta(minutes=1)
 now = datetime.datetime.now()
@@ -174,4 +93,6 @@ for i in range(0, 60*24, 15):
     fakenow = now + i * just1minute
     level = get_level(fakenow, 'white')
     print(level)
+    p.ChangeDutyCycle(50 * level)
+    time.sleep(1)
 
