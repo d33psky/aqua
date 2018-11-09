@@ -75,11 +75,16 @@ def get_level(now, colour):
                     break
             return level
 
+oldlevel = 0
 while 1:
     now = datetime.datetime.now()
-    level = get_level(now, 'white')
-    print(level)
-    p.ChangeDutyCycle(50 * level)
+    newlevel = get_level(now, 'white')
+    if newlevel != oldlevel:
+        print("Set new level %f" % newlevel)
+        oldlevel = newlevel
+        p.ChangeDutyCycle(50 * newlevel)
+    else:
+        print("Keep old level %f" % oldlevel)
     time.sleep(60)
 
 # test run an entire day
