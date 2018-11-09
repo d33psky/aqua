@@ -1,14 +1,11 @@
 #!/usr/bin/python3
-import RPi.GPIO as IO
+import pigpio
 import math
 import yaml
 import datetime
 import time
 
-IO.setmode (IO.BCM)
-IO.setup(18,IO.OUT)
-p = IO.PWM(18,100)
-p.start(0)
+pi = pigpio.pi()
 
 data = yaml.load(open('day.yaml'))
 #print(yaml.dump(data))
@@ -82,7 +79,7 @@ while 1:
     if newlevel != oldlevel:
         print("Set new level %f" % newlevel)
         oldlevel = newlevel
-        p.ChangeDutyCycle(50 * newlevel)
+        pi.hardware_PWM(18, 1000, int(newlevel*1e6))
     else:
         print("Keep old level %f" % oldlevel)
     time.sleep(60)
@@ -94,6 +91,6 @@ for i in range(0, 60*24, 15):
     fakenow = now + i * just1minute
     level = get_level(fakenow, 'white')
     print(level)
-    p.ChangeDutyCycle(50 * level)
+    pi.hardware_PWM(18, 1000, int(level*1e6))
     time.sleep(1)
 
