@@ -72,25 +72,30 @@ def get_level(now, colour):
                     break
             return level
 
-oldlevel = 0
-while 1:
-    now = datetime.datetime.now()
-    newlevel = get_level(now, 'white')
-    if newlevel != oldlevel:
-        print("Set new level %f" % newlevel)
-        oldlevel = newlevel
-        pi.hardware_PWM(18, 1000, int(newlevel*1e6))
-    else:
-        print("Keep old level %f" % oldlevel)
-    time.sleep(60)
+def main():
+    oldlevel = 0
+    while 1:
+        now = datetime.datetime.now()
+        newlevel = get_level(now, 'white')
+        if newlevel != oldlevel:
+            print("Set new level %f" % newlevel)
+            oldlevel = newlevel
+            pi.hardware_PWM(18, 1000, int(newlevel*1e6))
+        else:
+            print("Keep old level %f" % oldlevel)
+        time.sleep(60)
 
-# test run an entire day
-just1minute = datetime.timedelta(minutes=1)
-now = datetime.datetime.now()
-for i in range(0, 60*24, 15):
-    fakenow = now + i * just1minute
-    level = get_level(fakenow, 'white')
-    print(level)
-    pi.hardware_PWM(18, 1000, int(level*1e6))
-    time.sleep(1)
+def testrun():
+    # test run an entire day
+    just1minute = datetime.timedelta(minutes=1)
+    now = datetime.datetime.now()
+    for i in range(0, 60*24, 15):
+        fakenow = now + i * just1minute
+        level = get_level(fakenow, 'white')
+        print(level)
+        pi.hardware_PWM(18, 1000, int(level*1e6))
+        time.sleep(1)
+
+if __name__ == "__main__":
+    main()
 
